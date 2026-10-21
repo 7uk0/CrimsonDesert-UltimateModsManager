@@ -22,8 +22,8 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from cdumm.archive.paz_crypto import lz4_decompress
 import cdumm.archive.overlay_builder as ob
+from cdumm.archive.paz_crypto import lz4_decompress
 from cdumm.engine.apply_engine import ApplyWorker
 
 
@@ -87,7 +87,7 @@ def test_merged_entry_cache_invalidates_when_second_mod_changes(
     assert merged_body_v1[0x00:0x04] == b"\xAA\xAA\xAA\xAA"
     assert merged_body_v1[0x20:0x24] == b"\xBB\xBB\xBB\xBB"
 
-    paz1, _pamt1, entries1 = ob.build_overlay(
+    paz1, _pamt1, _entries1 = ob.build_overlay(
         [(merged_body_v1, merged_meta_v1)],
         game_dir=None, preloaded_cache=None, vanilla_pathc_path=None,
     )
