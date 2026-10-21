@@ -192,6 +192,35 @@ def _entry_supports_byte_merge(entry_path: str) -> bool:
     return ext in _BYTE_MERGEABLE_EXTS
 
 
+def _combined_delta_hash(metas) -> str:
+    """Change-fingerprint for a byte-merged overlay entry, covering ALL
+    of its component mods rather than just the one whose metadata was
+    kept.
+
+    ``overlay_builder.build_overlay`` skips rebuilding an entry — and
+    reuses last apply's compressed bytes verbatim — whenever the
+    entry's ``delta_hash`` is unchanged from the cached one (#447).
+    Before this, a merged entry's metadata was copied from a single
+    component mod, so toggling or editing any OTHER mod in the merge
+    left that ``delta_hash`` identical and the cache kept serving the
+    pre-change merge.
+    """
+    import hashlib
+
+    parts: list[str] = []
+    for meta in metas:
+        component = meta.get("delta_hash") or ""
+        if not component:
+            delta_path = meta.get("delta_path")
+            if delta_path:
+                try:
+                    component = str(os.path.getmtime(delta_path))
+                except OSError:
+                    component = ""
+        parts.append(component)
+    return hashlib.sha256("|".join(parts).encode()).hexdigest()
+
+
 def _yield_gil() -> None:
     """Release the GIL momentarily so the GUI thread can process events.
 
@@ -4148,6 +4177,17 @@ class ApplyWorker(QObject):
             if merged_body and merged_body != vanilla:
                 first_meta = dict(entries[indices[0]][1])
                 first_meta["_merged_from"] = len(indices)
+                # GitHub #447 (Vi-gilo): the merged entry used to keep
+                # ONLY the first mod's delta_hash/delta_path, so the
+                # overlay cache's change-detection in
+                # overlay_builder.build_overlay saw no change (same
+                # delta_hash) when a LATER mod in the merge was the one
+                # that actually changed, and kept serving the stale
+                # pre-merge compressed bytes. Derive the merged entry's
+                # delta_hash from every component mod so any of them
+                # changing invalidates the cache.
+                first_meta["delta_hash"] = _combined_delta_hash(
+                    entries[i][1] for i in indices)
                 result.append((merged_body, first_meta))
                 logger.info(
                     "Overlay merge: collapsed %d entries for %s",
