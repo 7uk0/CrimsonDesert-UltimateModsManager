@@ -53,7 +53,7 @@ Labels used below:
 ### What I'd do (short version)
 
 1. Plug the monitor in over **DisplayPort** (see §3.8: HDMI 2.0 likely can't carry 10-bit at 100 Hz).
-2. `sudo apt install --no-install-recommends plasma-workspace` (pulls in kwin-wayland and Xwayland). **Don't** install `sddm`: keep LightDM. At the LightDM login screen choose **"Plasma (Wayland)"** only when gaming.
+2. `sudo apt install --no-install-recommends plasma-workspace systemsettings kscreen` (pulls in kwin-wayland and Xwayland; `systemsettings` and `kscreen` hold the Display/HDR settings page and are only *Recommends*, so name them). **Don't** install `sddm`: keep LightDM. At the LightDM login screen choose **"Plasma (Wayland)"** only when gaming.
 3. In Plasma: System Settings → Display → **Enable HDR**. Set the SDR brightness slider, and run the HDR calibration if offered.
 4. For Crimson Desert, the safest order (fewest Denuvo activations) is in §3.9.
 
@@ -180,7 +180,7 @@ Denuvo limit source: "5 different PC within a day machine activation limit" (Ste
 **Denuvo facts:** 5 different PCs per day. Swapping Proton versions (and `WINE_CPU_TOPOLOGY`) can count as a new activation; you're locked out for 24 h. https://www.gamingonlinux.com/2025/05/denuvo-will-lock-you-out-of-games-on-linux-steamos-steam-deck-if-you-keep-changing-proton-versions/ **[source]**. A Crimson Desert Linux guide: "each version change = one activation". https://steamcommunity.com/sharedfiles/filedetails/?id=3688748480 **[source]**. **Whether `PROTON_ENABLE_WAYLAND` or switching compositor counts: unconfirmed.** Assume it might, and budget for it.
 
 **Low-activation plan (Plasma route):**
-1. Day 0 (no game launches): switch to DP. `sudo apt install --no-install-recommends plasma-workspace` (plus `systemsettings` / `kscreen` if they aren't pulled in; check with `apt-cache depends` **[unconfirmed]**). Keep LightDM. If apt asks for a default display manager, **choose lightdm**.
+1. Day 0 (no game launches): switch to DP. `sudo apt install --no-install-recommends plasma-workspace systemsettings kscreen` (`systemsettings` and `kscreen` are only *Recommends* of plasma-workspace, so they must be named **[source: packages.debian.org]**; other small KDE bits may still be missing, so add them if a settings page is empty **[unconfirmed]**). Keep LightDM. If apt asks for a default display manager, **choose lightdm**.
 2. Log out of XFCE → LightDM → session "Plasma (Wayland)" → enable HDR in Display settings, set SDR brightness **below** max (helps GE-Proton's auto-detect, per #838).
 3. Test HDR with something that isn't Denuvo-protected first (e.g. an HDR video in mpv `--vo=gpu-next`, or a non-Denuvo HDR game).
 4. Crimson Desert, **attempt 1** (same GE-Proton11-11, so likely no new activation): launch options `PROTON_ENABLE_WAYLAND=1 %command%`. If it crashes on HDR toggle with "min_lum" in the logs → don't keep retrying.
@@ -191,7 +191,18 @@ Denuvo limit source: "5 different PC within a day machine activation limit" (Ste
 
 **Risks to the XFCE install:** low with `--no-install-recommends` and LightDM kept. Possible side effects: extra autostart entries or portals (`xdg-desktop-portal-kde`) also starting in XFCE; Qt theme env from Plasma **[unconfirmed]**. Mitigation: a separate `gamer` user.
 
-**gamescope standalone (if you want to try):** use the trixie-backports gamescope, Ctrl+Alt+F3, log in, quit Steam in XFCE first, then e.g. `GAMESCOPE_COMPOSITE_FORCE=1 gamescope -e -W 3440 -H 1440 -r 144 --hdr-enabled -- steam -gamepadui`. **Don't** use `--hdr-itm-enable`. Back: Ctrl+Alt+F7 (or wherever LightDM/XFCE is; F1 on some setups). Kill with `gamescopectl shutdown` or `pkill gamescope` from another TTY. A reboot clears any NVIDIA corruption that persists afterwards.
+**gamescope standalone (if you want to try):** use the trixie-backports gamescope, Ctrl+Alt+F3, log in, quit Steam in XFCE first, then e.g. `GAMESCOPE_COMPOSITE_FORCE=1 gamescope -e -W 3440 -H 1440 -r 144 --hdr-enabled -- steam -gamepadui` (`-e` = `--steam`, Steam integration; with no DISPLAY/WAYLAND_DISPLAY set, gamescope picks its DRM backend on its own; `--backend drm` forces it). **Don't** use `--hdr-itm-enabled` (inverse tone-mapping of SDR; the flag several 1593 reports blame). Back: Ctrl+Alt+F7 (or wherever LightDM/XFCE is; F1 on some setups). Kill with `gamescopectl shutdown` or `pkill gamescope` from another TTY. A reboot clears any NVIDIA corruption that persists afterwards.
+
+### 3.10 Late findings (added 04:05 UTC) — these sharpen the Plasma advice
+
+- **Debian's Plasma 6.3.6 lacks KWin's Windows-game HDR paths.** `windows_bt2100` image-description support landed in KWin commit 49592c5593 (19 Feb 2026), first tagged **v6.7.90 / 6.8.0**. The Windows-HDR-app brightness workaround (957031ce) first appears in 6.6.0. KWin 6.3.6 does have `create_windows_scrgb`. **[source: KWin git]**
+  - Older Wine-Wayland logged "Wayland compositor doesn't expose windows_bt2100 image description (HDR may look broken)!" on such compositors. The same NVIDIA-forum user suggested nested gamescope at 3440x1440 `--hdr-enabled` as the fix, and said Plasma 6.8 fixes it. https://forums.developer.nvidia.com/t/615-release-feedback-discussion/382815 (post #81, 14 Sep 2026) **[source]**
+  - Current GE-Proton patch `0070-winewayland-detect-hdr-without-windows-image-descriptions.patch` downgrades that error. When the compositor lacks windows_bt2100, it "passes the original colorspace to Vulkan WSI" (HDR10 through NVIDIA's WSI). https://github.com/GloriousEggroll/proton-ge-custom/tree/master/patches/wine-hotfixes/em-fixups **[source]**. On KWin 6.3.6 + NVIDIA, HDR10 therefore goes through NVIDIA's Vulkan WSI, which is the path where the zero-metadata crash happens before 615.78.08. **[my reading of the sources]**
+  - Patch `0071-winewayland-use-kwin-output-hdr-state.patch` reads KWin's per-output HDR flag over `kde_output_device_v2`, with legacy v3 globals supported too, so it should also work on 6.3 **[source for the code; working on 6.3 is unconfirmed]**.
+- **KDE won't loosen the luminance check:** KDE bug 519000 ("consider clamping invalid mastering luminance") was RESOLVED WONTFIX on 22 Apr 2026. Xaver Hugl: "The fix for that will be for the Nvidia driver to add the checks that are required by the spec." https://bugs.kde.org/show_bug.cgi?id=519000 **[source]** → this matches NVIDIA's 615.78.08 fix.
+- **NVIDIA 615.78.08** is on download.nvidia.com (.run files dated 2026-10-06) but not in the Debian 13 CUDA repo yet. One user (8 Oct 2026, NVIDIA 615 feedback thread post #153) says it "fixed a regression which caused HDR colors to be washed out (introduced in original 615 driver)". That regression would affect Ian's 615.71.10. https://download.nvidia.com/XFree86/Linux-x86_64/615.78.08/ **[source]**. Avoid mixing the .run installer with repo packages; wait for the repo **[advice]**.
+- **NVIDIA DRM colour pipeline** (610.43+, `nvidia-drm color_pipeline` option; can blank the screen when enabling HDR on some compositors) needs **Linux 6.19+**. Ian's kernel 6.12 uses the older HDR properties, so this issue does not apply. https://linuxiac.com/nvidia-610-43-linux-driver-adds-vulkan-and-wayland-improvements/ **[source; "doesn't apply" is my reading]**
+- **Revised Crimson Desert order on Debian Plasma 6.3.6 + 615.71.10:** try **nested gamescope inside Plasma first** (attempt 2 in §3.9). Use Wine-Wayland direct only after NVIDIA ≥ 615.78.08 lands, or on a newer Plasma.
 
 ---
 
