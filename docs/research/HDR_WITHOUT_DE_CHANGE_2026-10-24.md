@@ -329,7 +329,7 @@ https://www.protondb.com/app/3321460 **[source]**. Relevant NVIDIA HDR entries:
 ### 3.26 Plasma 6.3.5 / 6.3.6 colour fixes Debian already has (≈04:28 UTC)
 
 From KDE's official changelogs, these are in Debian's 6.3.6. 6.3.5: "Wayland/colormanagement: use 203cd/m² reference luminance for Windows scRGB"; "Backends/drm: reduce minimum luminance for SDR". 6.3.6: "Wayland/colormanagement: fix sending target luminance levels" (the values gamescope's HDR check reads, §3.23), "… also round max_fall and max_cll", "Backends/drm: never use DEGAMMA_LUT", and **"Outputconfigurationstore: disable adaptive sync by default"**. https://kde.org/announcements/changelogs/plasma/6/6.3.4-6.3.5/ , https://kde.org/announcements/changelogs/plasma/6/6.3.5-6.3.6/ **[source]**
-→ Debian's 6.3.6 is the best 6.3 for HDR. **VRR is off by default**; switch Adaptive Sync on in Display settings if you want it (HDR+VRR flicker reports exist, see the search notes in §3.14 context) **[source for default; VRR advice mine]**.
+→ Debian's 6.3.6 is the best 6.3 for HDR. **VRR is off by default**; switch Adaptive Sync on in Display settings if you want it (HDR flicker/signal-loss with VRR on NVIDIA under KDE Wayland has been reported at high refresh rates, e.g. https://forums.developer.nvidia.com/t/nvidia-555-58-4k-120hz-causes-flickering-artifacting-on-x-and-wayland-with-arch/298187 (older 555 driver, via search summary); if you see flicker, turn VRR off first) **[source for default; VRR advice mine]**.
 
 ---
 
