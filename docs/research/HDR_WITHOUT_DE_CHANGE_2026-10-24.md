@@ -17,3 +17,10 @@
 - Arch Wiki HDR (raw text fetched): nvidia-open >= 595.58.03 ships VK_EXT_swapchain_colorspace + VK_EXT_hdr_metadata natively → vk-hdr-layer/ENABLE_HDR_WSI not needed; gamescope must NOT be combined with the layer.
 - NVIDIA forum 295314: embedded gamescope-session HDR corrupts above 2560x1440@120 on NVIDIA; nested gamescope under Plasma 6 Wayland worked HDR at 3440x1440@144 DP (2024 report). Still unresolved Mar 2026.
 - gamescope #1964: embedded gamescope overlay corruption reproduced on RTX 3060 Ti + 615.71.09 + gamescope 3.16.30 (Oct 4 2026); `GAMESCOPE_COMPOSITE_FORCE=1` reported to help.
+
+### Interim additions (≈03:51 UTC)
+- NVIDIA's Debian 13 CUDA repo lists nvidia-open 615.71.10-1 (so Ian's driver is a real repo build): https://developer.download.nvidia.com/compute/cuda/repos/debian13/x86_64/
+- Debian trixie: kwin-wayland 6.3.6, plasma-workspace 6.3.6-2 (ships /usr/share/wayland-sessions/plasma.desktop + startplasma-wayland; depends on kwin-wayland; sddm only Recommended via kde-plasma-desktop). sway 1.10.1 (no HDR; HDR came in 1.12), labwc 0.8.3 (HDR came in 0.20), hyprland 0.55.2 in trixie-backports, gamescope 3.16.22 in trixie-backports (upstream now 3.17.0, Oct 23 2026).
+- KDE bug 527216 comment (Oct 17 2026): RTX 3090, Plasma 6.8, GE-Proton11-9 → Crimson Desert HDR working with Wine-Wayland.
+- Proton #9595: Xid 109 freezes in Crimson Desert on NVIDIA incl. 615.71.09 (not HDR-specific).
+- NVIDIA 555.58 notes: HDMI 10 bpc on by default (nvidia-modeset hdmi_deepcolor).
