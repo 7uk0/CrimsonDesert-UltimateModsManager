@@ -220,7 +220,7 @@ Denuvo limit source: the Steam store page itself (fetched 25 Oct 2026): "Incorpo
 - **Crimson Desert at exactly 3440x1440 through gamescope:** a ProtonDB report (seen via search snippet only; it was not among the 37 reports later rendered in §3.18) used `gamescope -W 3440 -H 1440 -r 175 -f --hdr-enabled --force-grab-cursor -- %command%`, which worked "with no other launch options". It **crashed after a few minutes with NVIDIA Reflex Low Latency on**; disabling Reflex fixed it. GPU/compositor not visible in the snippet. https://www.protondb.com/app/3321460 **[source, partial]** → in §3.9 attempt 2, **turn Reflex off in-game**. Crimson Desert ProtonDB summary: Gold, 733 reports (API). **[source]**
 - **Don't run two gamescopes at once on nvidia-open:** Bazzite #6089 (18 Oct 2026; RTX 3090, 615.78.08, Plasma 6.7.5) reports a GPU crash (Xid 51/154) when two gamescope instances with realtime priority run at once. https://github.com/ublue-os/bazzite/issues/6089 **[source]** → e.g. don't launch a game with gamescope launch options inside a gamescope Steam session.
 - **Denuvo and launch options, conflicting claims:** SteamDeckHQ says "Changing launch options or enabling DLSS/raytracing doesn't count towards the limit", only Proton version changes do. Pirat_Nation says launch-option changes count too. https://x.com/SteamDeckHQ/status/2045192293813203341 , https://x.com/Pirat_Nation/status/2045080075247243495 (both via search snippets) **[source, conflicting → unconfirmed]**
-- **Debian gamescope backport** ships the gamescope WSI layer (`/usr/share/vulkan/implicit_layer.d/VkLayer_FROG_gamescope_wsi.x86_64.json`, 64-bit only) that `--hdr-enabled` needs ("needs Gamescope WSI layer enabled for support from clients" — gamescope `--help`). Binaries go in `/usr/games`. It depends on libwlroots-0.18. https://packages.debian.org/trixie-backports/amd64/gamescope/filelist **[source]**
+- **Debian gamescope backport** ships the gamescope WSI layer (`/usr/share/vulkan/implicit_layer.d/VkLayer_FROG_gamescope_wsi.x86_64.json`, 64-bit only) that `--hdr-enabled` needs ("needs Gamescope WSI layer enabled for support from clients" — gamescope `--help`). Binaries go in `/usr/games`. It depends on libwlroots-0.18. The backport changelog (19 Apr 2026): "Rebuild for trixie-backports. Disable openvr backend… Revert to wlroots 0.18… Drop patches that fix crashes on wlroots 0.19". There are no HDR-specific Debian patches. https://metadata.ftp-master.debian.org/changelogs/contrib/g/gamescope/gamescope_3.16.22+ds-1~bpo13+1_changelog https://packages.debian.org/trixie-backports/amd64/gamescope/filelist **[source]**
 - **XFCE theme safety:** Plasma's GTK sync module rewrites `~/.config/gtk-3.0/settings.ini` / `~/.gtkrc-2.0`, which XFCE also uses (Arch Wiki KDE, XFCE forum reports). In Debian that module is `kde-config-gtk-style`, only a *Recommends* of plasma-desktop, so `--no-install-recommends` avoids it. https://forum.xfce.org/viewtopic.php?id=9804 , https://packages.debian.org/trixie/plasma-desktop **[source]**
 
 ### 3.12 Keep XFCE itself, but on Wayland? (extra angle, ≈04:11 UTC)
@@ -339,12 +339,13 @@ From KDE's official changelogs, these are in Debian's 6.3.6. 6.3.5: "Wayland/col
 
 - Whether NVIDIA 595.112.07 (in the Debian repo now) carries 595.104.02's HDR-metadata fix. It's very likely, since it's a later build in the same branch, but its notes don't say.
 - No NVIDIA staff reply in the 610.43.02 "invalid HDR metadata" forum thread (2 posts, Jun–Jul 2026). The fix is known only from the 595.104.02 / 615.78.08 changelogs. https://forums.developer.nvidia.com/t/610-43-02-invalid-hdr-metadata-min-lum-max-lum-passed-through-to-wayland-compositor-unfiltered-causing-client-termination-system-wide-hdr-also/374323
-
 - Whether NVIDIA 615.78.08 fully fixes Crimson Desert's zero-metadata crash on KWin 6.3.
 - Whether a Wine-Wayland ↔ XWayland or compositor change costs a Denuvo activation.
 - Monitor real peak brightness (250 vs ~400 nit) and DSC support.
 - Whether nested gamescope in KWin 6.3.6 on NVIDIA 615 still handles 3440x1440 HDR (the 2024 report was on 555).
 - Steam single-instance behaviour across TTY sessions (expected, not sourced).
+- Whether NVIDIA's Vulkan WSI on KWin 6.3.6 (no `windows_bt2100`) gives correct HDR tone for Wine-Wayland games. Some NVIDIA users reported washed-out Wine-Wayland HDR on newer Plasma (§3.14).
+- Whether Crimson Desert's in-game HDR toggle appears under nested gamescope with GE-Proton11-11 without `DXVK_HDR=1` (auto-detection says yes; untested here).
 
 ## 5. Times
 
