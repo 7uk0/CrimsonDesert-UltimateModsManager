@@ -154,7 +154,7 @@ Sources:
 
 Pros: the game's native HDR path as designed; no Wine-Wayland/KWin/NVIDIA bugs; NVIDIA's Windows HDR stack is mature.
 Cons: a second OS (updates, disk space; your Wolf-Box disk layout would need a partition or second drive); rebooting to play; Denuvo probably treats Windows as another "PC" (the limit is 5 different PCs per day) **[unconfirmed]**; it doesn't match your Linux-first home-lab setup.
-Denuvo limit source: "5 different PC within a day machine activation limit" (Steam listing as reported). https://insider-gaming.com/crimson-desert-denuvo-drm/ **[source]**
+Denuvo limit source: the Steam store page itself (fetched 25 Oct 2026): "Incorporates 3rd-party DRM: Denuvo Anti-tamper. 5 different PC within a day machine activation limit". https://store.steampowered.com/app/3321460/ **[source]** (also reported by https://insider-gaming.com/crimson-desert-denuvo-drm/)
 
 ### 3.7 Angle 7: Crimson Desert specifics
 
