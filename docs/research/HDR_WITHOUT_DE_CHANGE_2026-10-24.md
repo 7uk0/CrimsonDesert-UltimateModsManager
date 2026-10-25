@@ -62,7 +62,7 @@ Labels used below:
 
 1. Plug the monitor in over **DisplayPort** (see §3.8: HDMI 2.0 likely can't carry 10-bit at 100 Hz).
 2. `sudo apt install --no-install-recommends plasma-desktop systemsettings kscreen` (plasma-desktop depends on plasma-workspace → kwin-wayland → Xwayland, and gives you a real desktop shell to launch Steam from; `systemsettings` and `kscreen` hold the Display/HDR page and are only *Recommends*, so name them; `--no-install-recommends` keeps out `sddm` and `kde-config-gtk-style`, the module that rewrites XFCE's GTK theme files). **Don't** install `sddm`: keep LightDM. At the LightDM login screen choose **"Plasma (Wayland)"** only when gaming.
-3. In Plasma: System Settings → Display → **Enable HDR**, then set the SDR brightness slider **below** the maximum (this helps GE-Proton's HDR auto-detect). Plasma 6.3 has no HDR calibration app; you can set the panel's real peak with `kscreen-doctor output.DP-1.maxBrightnessOverride.<nits>` (§3.17).
+3. In Plasma: System Settings → Display → **Enable HDR**, then set the SDR brightness slider **clearly below** the panel's peak. This is **required**: gamescope ≥ 3.16.18 (Debian's 3.16.22 too) and GE-Proton both treat "SDR brightness = peak" as *no HDR* (§3.23). Plasma 6.3 has no HDR calibration app; you can set the panel's real peak with `kscreen-doctor output.DP-1.maxBrightnessOverride.<nits>` (§3.17).
 4. Crimson Desert, first try (Proton version unchanged): `DXVK_HDR=1 gamescope -W 3440 -H 1440 -w 3440 -h 1440 -r 144 -f --hdr-enabled --force-grab-cursor -- %command%`, with Reflex off and the in-game HDR peak set to the panel's nits. Full low-Denuvo-activation order in §3.9.
 5. Later, once nvidia-open ≥ 615.78.08 is in NVIDIA's Debian 13 repo: try plain `PROTON_ENABLE_WAYLAND=1 %command%` (Wine-Wayland direct, no gamescope).
 
@@ -304,6 +304,12 @@ https://www.protondb.com/app/3321460 **[source]**. Relevant NVIDIA HDR entries:
 
 - NVIDIA Debian 13 repo: newest `nvidia-open` is **615.71.10-1 (file dated 2026-09-24)**. 615.78.08 is not there yet. https://developer.download.nvidia.com/compute/cuda/repos/debian13/x86_64/ **[source]**
 - **No newer Plasma for trixie:** kwin-wayland isn't in trixie-backports. The Debian Qt/KDE team's trixie plan page lists no Plasma backports beyond 6.3.0 (Feb 2025). https://wiki.debian.org/PkgQtKde/TrixieReleasePlans , https://packages.debian.org/search?keywords=kwin-wayland **[source]**. Plasma ≥ 6.8 (with `windows_bt2100`) means waiting for Debian 14 "forky" (6.7.4 there today) or leaving Debian stable. Neither is recommended here.
+
+### 3.23 IMPORTANT for a low-nit monitor: SDR brightness must be below peak (≈04:25 UTC)
+
+- gamescope commit **7d4e835** (Xaver Hugl, 25 Oct 2025; in tags 3.16.18+, **so in Debian's 3.16.22**) changed nested HDR detection. It now uses `bExposeHDRSupport = cv_hdr_enabled && uMaxTargetLuminance > uReferenceLuminance`, and logs `HDR INFO … uMaxLum … uRefLum … bExposeHDRSupport`. https://github.com/ValveSoftware/gamescope/commit/7d4e835 **[source: git show]**
+- GE-Proton's Wine-Wayland uses the same "max > reference" idea when KWin's HDR flag isn't available (#838), and gamescope #2037 users fixed washed-out or SDR-only output by setting **SDR/paper-white slightly below the HDR peak** (e.g. 340 SDR / 390 peak). https://github.com/ValveSoftware/gamescope/issues/2037 , https://github.com/GloriousEggroll/proton-ge-custom/issues/838 **[source]**
+- → **On a ~250–400 nit panel, KWin's SDR brightness can easily end up equal to the peak, and then gamescope silently stays SDR.** In Plasma's Display settings (or `kscreen-doctor output.DP-1.sdr-brightness.<nits>`), set SDR brightness clearly **below** the panel's peak (e.g. peak 400 → SDR ~200–300). Check the gamescope terminal/log for `bExposeHDRSupport: true`. **[my synthesis of the sources]**
 
 ---
 
