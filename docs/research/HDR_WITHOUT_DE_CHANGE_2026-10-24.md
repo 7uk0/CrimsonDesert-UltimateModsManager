@@ -326,6 +326,11 @@ https://www.protondb.com/app/3321460 **[source]**. Relevant NVIDIA HDR entries:
 - **Costs / risks:** it's a driver *downgrade* (615 → 595). You lose 615 features such as VK_NV_low_latency2 r2/r3 (Reflex in Proton). DKMS rebuilds the module. Crimson Desert Xid 109 freezes were reported on 595.84, 610 and 615 alike (Proton #9595), so no branch is clean. Whether a driver change costs a Denuvo activation is **unknown**. NVIDIA's Debian guide: "To confine and pin the system to track a specific branch or driver version, install the appropriate pinning package" (`apt install nvidia-driver-pinning-<branch>`), then `apt -V install nvidia-open`; branch changes go through `apt dist-upgrade --autoremove --purge nvidia-open`. It gives **no downgrade instructions**, and you'd have to remove the existing `nvidia-driver-pinning-615*` package first. https://docs.nvidia.com/datacenter/tesla/driver-installation-guide/debian.html **[source; the downgrade path itself is unconfirmed]**. Have a TTY or rescue plan ready before trying it.
 - **Recommendation:** try **nested gamescope first** (no driver change). Switch to 595.112.07 only if you want Wine-Wayland HDR now, or if the 615 washed-out regression shows up. Otherwise wait for 615.78.08+ in the repo.
 
+### 3.26 Plasma 6.3.5 / 6.3.6 colour fixes Debian already has (≈04:28 UTC)
+
+From KDE's official changelogs, these are in Debian's 6.3.6. 6.3.5: "Wayland/colormanagement: use 203cd/m² reference luminance for Windows scRGB"; "Backends/drm: reduce minimum luminance for SDR". 6.3.6: "Wayland/colormanagement: fix sending target luminance levels" (the values gamescope's HDR check reads, §3.23), "… also round max_fall and max_cll", "Backends/drm: never use DEGAMMA_LUT", and **"Outputconfigurationstore: disable adaptive sync by default"**. https://kde.org/announcements/changelogs/plasma/6/6.3.4-6.3.5/ , https://kde.org/announcements/changelogs/plasma/6/6.3.5-6.3.6/ **[source]**
+→ Debian's 6.3.6 is the best 6.3 for HDR. **VRR is off by default**; switch Adaptive Sync on in Display settings if you want it (HDR+VRR flicker reports exist, see the search notes in §3.14 context) **[source for default; VRR advice mine]**.
+
 ---
 
 ## 4. Open questions and unconfirmed items
