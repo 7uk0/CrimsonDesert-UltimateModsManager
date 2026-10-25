@@ -198,7 +198,7 @@ Denuvo limit source: the Steam store page itself (fetched 25 Oct 2026): "Incorpo
 6. Later, once nvidia-open ≥ 615.78.08 reaches the Debian 13 repo, retry attempt 2.
 7. Keep the **same GE-Proton build (11-11)** throughout. Changing Proton versions is the documented Denuvo trigger.
 
-**Switching back:** log out of Plasma → LightDM → pick "Xfce Session". Nothing else changes. **Uninstall:** `sudo apt purge plasma-desktop plasma-workspace kwin-wayland systemsettings kscreen && sudo apt autoremove` (check the list before confirming).
+**Switching back:** log out of Plasma → LightDM → pick "Xfce Session". Nothing else changes. Note: LightDM is meant to **remember the last session you picked** (stored through AccountsService `XSession`, with `~/.dmrc` as a fallback), so after a gaming session the greeter may pre-select Plasma. Check the session menu before logging in. https://bugzilla.redhat.com/show_bug.cgi?id=1010694 , https://code.edge.launchpad.net/bugs/1282139 **[source, bug-tracker level]** **Uninstall:** `sudo apt purge plasma-desktop plasma-workspace kwin-wayland systemsettings kscreen && sudo apt autoremove` (check the list before confirming).
 
 **Risks to the XFCE install:** low with `--no-install-recommends` and LightDM kept. Possible side effects: extra autostart entries or portals (`xdg-desktop-portal-kde`) also starting in XFCE; Qt theme env from Plasma **[unconfirmed]**. Mitigation: a separate `gamer` user.
 
