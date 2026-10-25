@@ -72,6 +72,7 @@ Labels used below:
 
 - Start: **2026-10-25 03:38:26 UTC** (`date`).
 - End: see §5.
+- Arch Wiki pages cited were last edited: HDR 2026-09-11, Gamescope 2026-05-28, KDE 2026-10-22 (MediaWiki API) **[source]**.
 - Method: web searches and page fetches, plus reading the actual source code of gamescope (master, Oct 2026), KWin (tag v6.3.6 = Debian trixie), the NVIDIA open kernel modules (615.71.10 / 615.78.08) and vkd3d-proton history. Package versions come from packages.debian.org and NVIDIA's Debian 13 repo index.
 
 ---
