@@ -336,6 +336,11 @@ https://www.protondb.com/app/3321460 **[source]**. Relevant NVIDIA HDR entries:
 From KDE's official changelogs, these are in Debian's 6.3.6. 6.3.5: "Wayland/colormanagement: use 203cd/m² reference luminance for Windows scRGB"; "Backends/drm: reduce minimum luminance for SDR". 6.3.6: "Wayland/colormanagement: fix sending target luminance levels" (the values gamescope's HDR check reads, §3.23), "… also round max_fall and max_cll", "Backends/drm: never use DEGAMMA_LUT", and **"Outputconfigurationstore: disable adaptive sync by default"**. https://kde.org/announcements/changelogs/plasma/6/6.3.4-6.3.5/ , https://kde.org/announcements/changelogs/plasma/6/6.3.5-6.3.6/ **[source]**
 → Debian's 6.3.6 is the best 6.3 for HDR. **VRR is off by default**; switch Adaptive Sync on in Display settings if you want it (HDR flicker/signal-loss with VRR on NVIDIA under KDE Wayland has been reported at high refresh rates, e.g. https://forums.developer.nvidia.com/t/nvidia-555-58-4k-120hz-causes-flickering-artifacting-on-x-and-wayland-with-arch/298187 (older 555 driver, via search summary); if you see flicker, turn VRR off first) **[source for default; VRR advice mine]**.
 
+### 3.27 How GE-Proton11-11 decides "HDR" under gamescope and on plain X11 (≈04:37 UTC)
+
+Patch `0069-wine-detect-gamescope-hdr-and-honor-opt-outs.patch` (present in the GE-Proton11-11 tag, along with DXVK's `dxgi-auto-detect-hdr.patch` and `dxgi-respect-output-hdr-state.patch`): under gamescope, Wine reads gamescope's `GAMESCOPE_HDR_OUTPUT_FEEDBACK` X root property, and "A reported SDR state takes precedence over an inherited DXVK_HDR=1". On plain X11 without that feedback it "default[s] to SDR but preserve[s] an explicit DXVK_HDR=1"; `DXVK_HDR=0` / `DXVK_NO_HDR=1` are honoured. https://raw.githubusercontent.com/GloriousEggroll/proton-ge-custom/GE-Proton11-11/patches/wine-hotfixes/em-fixups/0069-wine-detect-gamescope-hdr-and-honor-opt-outs.patch **[source]**
+→ Inside nested gamescope, `DXVK_HDR=1` is harmless: gamescope's own HDR state decides (so the §3.23 SDR-below-peak rule matters). **In XFCE/X11, don't set `DXVK_HDR=1`.** It could make the game offer HDR while the screen stays SDR, which gives a wrong, washed-out picture. **[my reading of the patch]**
+
 ---
 
 ## 4. Open questions and unconfirmed items
