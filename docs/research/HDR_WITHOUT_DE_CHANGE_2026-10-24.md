@@ -71,7 +71,7 @@ Labels used below:
 ## 2. Elapsed-time and method note
 
 - Start: **2026-10-25 03:38:26 UTC** (`date`).
-- End: see §5.
+- End: 2026-10-25 04:38:27 UTC (see §5).
 - Arch Wiki pages cited were last edited: HDR 2026-09-11, Gamescope 2026-05-28, KDE 2026-10-22 (MediaWiki API) **[source]**.
 - Method: web searches and page fetches, plus reading the actual source code of gamescope (master, Oct 2026), KWin (tag v6.3.6 = Debian trixie), the NVIDIA open kernel modules (615.71.10 / 615.78.08) and vkd3d-proton history. Package versions come from packages.debian.org and NVIDIA's Debian 13 repo index.
 
@@ -167,7 +167,7 @@ Denuvo limit source: the Steam store page itself (fetched 25 Oct 2026): "Incorpo
   - 615.78.08 is **not yet** in NVIDIA's Debian 13 CUDA repo (newest there: 615.71.10-1); `download.nvidia.com` has 615.78.08 files (.run). https://developer.download.nvidia.com/compute/cuda/repos/debian13/x86_64/ **[source]**
   - Other workarounds from the issue: a small Vulkan layer "hdrfix" that clamps the metadata (code posted in a comment, no repo link; reported working with Crimson Desert on NVIDIA 610.57.04); a KWin binary patch (risky; must be redone on every update). Or **run the game via nested gamescope inside Plasma**, which does its own colour management. A ProtonDB user on NVIDIA 610.57.04 had exactly "crashes when enabling in-game HDR without using gamescope", fixed by gamescope at 3440x1440 (§3.18) **[source; not proven to be the same root cause]**.
 - Reports: CachyOS thread (Apr 2026; RTX 4090, KDE): HDR crash on enable; only gamescope `--hdr-enabled` started with HDR (then froze); another user had success with `PROTON_ENABLE_WAYLAND=1 PROTON_VKD3D_HEAP=1 VKD3D_CONFIG=descriptor_heap PROTON_ENABLE_HDR=1 ENABLE_HDR_WSI=1`. https://discuss.cachyos.org/t/crimson-desert-activating-hdr-leads-to-crash-to-desktop/27513 **[source]**
-- **Oct 17 2026:** RTX 3090, Plasma 6.8, GE-Proton11-9: HDR working; with `PROTON_ENABLE_WAYLAND=0` HDR is lost. http://www.mail-archive.com/kde-bugs-dist@kde.org/msg1220237.html **[source]**
+- **Oct 17 2026:** RTX 3090, Plasma 6.8, GE-Proton11-9: HDR working; with `PROTON_ENABLE_WAYLAND=0` HDR is lost. http://www.mail-archive.com/kde-bugs-dist@kde.org/msg1220237.html (KDE bug https://bugs.kde.org/show_bug.cgi?id=527216, a cursor-flicker bug on kwin 6.8.0, RESOLVED; the HDR remark was a side comment) **[source]**
 - Not HDR-related but relevant to NVIDIA: Proton #9595 has Xid 109 freezes on RTX 30/40 cards incl. 615.71.09. https://github.com/ValveSoftware/Proton/issues/9595 **[source]**
 
 ### 3.8 Angle 8: DP vs HDMI at 3440x1440 for HDR
@@ -359,5 +359,6 @@ Debian's gamescope 3.16.22 does publish that atom (`src/steamcompmgr.cpp`: `XInt
 
 ## 5. Times
 
-- Start: 2026-10-25 03:38:26 UTC
-- End: (filled at finish)
+- Start: 2026-10-25 03:38:26 UTC (`date`)
+- End: 2026-10-25 04:38:27 UTC (`date`)
+- Elapsed: 60 min 01 s of wall-clock research. All work was web/source research in a cloud container; nothing was run on Ian's PC.
