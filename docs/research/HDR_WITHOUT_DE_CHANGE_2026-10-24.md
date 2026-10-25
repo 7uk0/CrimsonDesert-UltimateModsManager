@@ -347,6 +347,7 @@ From KDE's official changelogs, these are in Debian's 6.3.6. 6.3.5: "Wayland/col
 - Monitor real peak brightness (250 vs ~400 nit) and DSC support.
 - Whether nested gamescope in KWin 6.3.6 on NVIDIA 615 still handles 3440x1440 HDR (the 2024 report was on 555).
 - Steam single-instance behaviour across TTY sessions (expected, not sourced).
+- **No report found anywhere for Crimson Desert HDR on Debian 13 / Plasma 6.3 specifically.** Every working report found was on a newer Plasma (6.7–6.8), Hyprland, or unstated. Ian would be the first data point.
 - Whether NVIDIA's Vulkan WSI on KWin 6.3.6 (no `windows_bt2100`) gives correct HDR tone for Wine-Wayland games. Some NVIDIA users reported washed-out Wine-Wayland HDR on newer Plasma (§3.14).
 - Whether Crimson Desert's in-game HDR toggle appears under nested gamescope with GE-Proton11-11 without `DXVK_HDR=1` (auto-detection says yes; untested here).
 
