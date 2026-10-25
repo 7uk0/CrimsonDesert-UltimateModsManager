@@ -250,6 +250,12 @@ Suggested Crimson Desert launch line for that first try (it keeps GE-Proton11-11
 - **Wine-Wayland:** `PROTON_LOG=1` and look for `waylanddrv` colour-management lines / "min_lum" errors (Proton #9672, NVIDIA thread #81). **[source]**
 - **In-game:** Crimson Desert's HDR toggle only appears or works when the DXGI output reports HDR (GE-Proton auto-detection, §3.7). If it stays greyed out, the session isn't passing HDR through. **[my reading of GE notes]**
 
+### 3.16 KWin 6.3.6 protocol features vs. what gamescope needs (≈04:14 UTC)
+
+KWin v6.3.6 `src/wayland/colormanagement_v1.cpp` advertises these features: parametric, extended_target_volume, set_mastering_display_primaries, set_primaries, set_luminances, windows_scrgb. Transfer functions: gamma22, sRGB, **ST2084 PQ**, ext_linear. Primaries: sRGB, **BT.2020**, P3 and others. https://invent.kde.org/plasma/kwin/-/blob/v6.3.6/src/wayland/colormanagement_v1.cpp **[source]**
+gamescope's `bSupportsGamescopeColorManagement` check (WaylandBackend.cpp) requires parametric + set_primaries + set_mastering_display_primaries + extended_target_volume + set_luminances + windows_scrgb + PQ + sRGB/BT.2020 primaries, **all of which KWin 6.3.6 offers**. gamescope can also fall back to frog. → Nested gamescope HDR should be fully supported, protocol-wise, on Debian's Plasma. **[source: both files; actual picture on NVIDIA untested]**
+Ian's EDID (HDR10 PQ + BT.2020, per the brief) matches KWin's HDR capability test: `HDR_OUTPUT_METADATA` property + `edid()->supportsPQ()` + colourspace allowed (NVIDIA ≥ 565.57.01). **[source: drm_output.cpp]**
+
 ---
 
 ## 4. Open questions and unconfirmed items
