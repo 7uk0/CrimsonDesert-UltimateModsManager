@@ -54,6 +54,8 @@ Labels used below:
 
 10. **Dual-boot Windows.** It has the most mature HDR (the game's own HDR menu, as intended). Downsides: a second OS to maintain, a disk or partition for it, and probably a separate Denuvo "machine" activation **[unconfirmed]**. Covered in §3.6.
 
+> **Expectation:** Acer's specs for this monitor family say ~250 nits peak and an 8-bit panel with no local dimming. HDR will mostly change colour and the tone curve, with no real "pop" (§3.19).
+
 ### What I'd do (short version)
 
 1. Plug the monitor in over **DisplayPort** (see §3.8: HDMI 2.0 likely can't carry 10-bit at 100 Hz).
@@ -274,6 +276,12 @@ https://www.protondb.com/app/3321460 **[source]**. Relevant NVIDIA HDR entries:
 - The 3440x1440@175 "disable Reflex" report from the search snippet was **not** among the 37 loaded reports. It remains snippet-only.
 
 **Extra tip from this (not HDR):** if Crimson Desert freezes randomly on an Intel CPU, check `journalctl -k | grep -i 'split lock'`. Ian has a Ryzen 7 3700X; split-lock detection is mainly an Intel thing, so it probably doesn't apply **[my note, unconfirmed for Zen 2]**.
+
+### 3.19 Expectation check on the monitor (≈04:17 UTC)
+
+- Acer's own data sheet for the sibling model **ED340CUJ0** (UM.CE0EE.004, same 34" 3440x1440 VA ED0 family; the PDF was fetched and its text extracted) lists **peak brightness 250 cd/m², colour depth 8 bit, HDR10, HDMI 2.0, DP 1.4**. https://ik.imagekit.io/pimberly/65707b38e31f5a94719d7ba0/586f9c7e/680fe786c3421c9df1110a2e/product-pdf **[source; sibling model, not the S3 itself]**. Search snippets for the S3 page also show 250 cd/m² and 8-bit (§3.8).
+- Arch Wiki: displays without local dimming "may provide a suboptimal experience" in HDR. https://wiki.archlinux.org/title/HDR **[source]**
+- → **Be realistic:** on a ~250–400 nit edge-lit VA panel, HDR10 mostly gives wider colour and a different tone curve, not bright highlights. It's worth getting working, but compare it honestly with SDR. Some people prefer SDR on such panels. **[my assessment]**
 
 ---
 
