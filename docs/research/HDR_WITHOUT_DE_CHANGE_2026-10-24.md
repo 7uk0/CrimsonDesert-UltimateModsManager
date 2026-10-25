@@ -283,6 +283,13 @@ https://www.protondb.com/app/3321460 **[source]**. Relevant NVIDIA HDR entries:
 - Arch Wiki: displays without local dimming "may provide a suboptimal experience" in HDR. https://wiki.archlinux.org/title/HDR **[source]**
 - → **Be realistic:** on a ~250–400 nit edge-lit VA panel, HDR10 mostly gives wider colour and a different tone curve, not bright highlights. It's worth getting working, but compare it honestly with SDR. Some people prefer SDR on such panels. **[my assessment]**
 
+### 3.20 Standalone gamescope on NVIDIA: the fix landscape as of 25 Oct 2026 (≈04:19 UTC)
+
+- **gamescope PR #2348** ("Add GBM Scanout Backend for NVIDIA to fix DRM Corruption", opt-in `drm_nvidia_gbm_scanout`) was **closed unmerged on 8 Sep 2026**. Collaborator: "NVIDIA should just fix this bug, nobody should have to use GBM." https://github.com/ValveSoftware/gamescope/pull/2348 **[source]**
+- **CachyOS #1082** (13 Oct 2026; RTX 4070 Ti SUPER, **615.78.08**, gamescope 3.16.25): the corruption still reproduces at 5120x1440@144 HDR in the gamescope session when you toggle HDR or change resolution. `NVreg_RegistryDwords=RMDisableNoncontigAlloc=1` alone does nothing without PR #1305. Bazzite 44 (which ships it) is clean. "Same monitor and mode work in KDE and Windows." https://github.com/CachyOS/linux-cachyos/issues/1082 **[source]**
+- **CachyOS forum "Gamescope Session NVIDIA"** (Aug–Sep 2026; RTX 4070 Super / 3090): HDR "broken or unreliable", advice to keep it off. VRR works via `ADAPTIVE_SYNC=1`. Steam needed "disable GPU blocklist". https://discuss.cachyos.org/t/gamescope-session-nvidia/34980 **[source]**
+- → **Standalone gamescope + HDR on stock Debian + NVIDIA 615 at 3440x1440 is still a "maybe, probably not".** The only proven fix (PR #1305 + registry key) means patching and building NVIDIA's open kernel module yourself, which is outside what a stock Debian install should take on. **[my assessment]**
+
 ---
 
 ## 4. Open questions and unconfirmed items
