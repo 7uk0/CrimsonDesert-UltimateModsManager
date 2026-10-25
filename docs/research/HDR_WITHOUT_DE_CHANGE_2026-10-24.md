@@ -21,12 +21,14 @@ Labels used below:
 1. **A KDE Plasma (Wayland) session used only for HDR gaming, picked at the LightDM login screen.** XFCE stays the default.
    - Debian trixie's KWin 6.3.6 has everything HDR needs: the HDR toggle, the stable `wp_color_manager_v1` protocol and the `frog` protocol **[source: KWin source]**. On NVIDIA it only enables HDR on driver ≥ 565.57.01, and you have 615 **[source: KWin source]**.
    - Your driver (≥ 595.58.03) already has the Vulkan HDR extensions built in. **You do not need `vk-hdr-layer` or `ENABLE_HDR_WSI=1`** **[source: Arch Wiki]**.
-   - **Crimson Desert caveat:** under Wine-Wayland (GE-Proton with `PROTON_ENABLE_WAYLAND=1`), the game sends all-zero HDR metadata. On NVIDIA drivers before 615.78.08 that makes KWin disconnect it, and the game crashes **[source: Proton #9672, KWin source]**. NVIDIA 615.78.08 (7 Oct 2026) lists a fix for exactly this crash path **[source: Phoronix, linuxcompatible]**. Your 615.71.10 is older than that, and 615.78.08 is **not yet in NVIDIA's Debian 13 repo** **[source: repo index]**. Two ways to avoid the crash are in §3.7.
+   - **Crimson Desert caveat:** under Wine-Wayland (GE-Proton with `PROTON_ENABLE_WAYLAND=1`), the game sends all-zero HDR metadata. On NVIDIA drivers before 615.78.08 that makes KWin disconnect it, and the game crashes **[source: Proton #9672, KWin source]**. KDE refuses to relax the check (bug 519000 WONTFIX: "the fix … will be for the Nvidia driver") **[source]**. NVIDIA 615.78.08 (7 Oct 2026) lists a fix for exactly this crash path **[source: Phoronix, linuxcompatible]**. Your 615.71.10 is older than that (its display source is identical to 615.71.09 in the files I diffed), and 615.78.08 is **not yet in NVIDIA's Debian 13 repo** **[source: repo index]**. A user also reports 615.78.08 fixed a 615-branch "washed out HDR" regression **[source, §3.10]**. Workarounds are in §3.7; the simplest is option 2 below.
    - One Oct 17 2026 report: RTX 3090 + Plasma 6.8 + GE-Proton11-9 = Crimson Desert HDR working **[source: KDE bug 527216]**. That user had a newer Plasma than Debian's.
 
-2. **Inside that Plasma session, run the game through nested gamescope (`gamescope --hdr-enabled …`).** This is a fallback, or the main route if the Wine-Wayland crash hits you.
-   - gamescope talks to KWin itself over the frog/wp protocols, so NVIDIA's metadata pass-through is not involved **[unconfirmed for Crimson Desert specifically]**.
-   - In 2024 a gamescope collaborator reported that **nested gamescope under Plasma worked with HDR at 3440x1440@144 over DisplayPort on NVIDIA**. The broken case was standalone gamescope, not nested **[source: NVIDIA forum 295314]**.
+2. **Inside that Plasma session, run the game through nested gamescope (`gamescope --hdr-enabled …`).** **On Ian's exact versions (Plasma 6.3.6 + driver 615.71.10) this is the one to try FIRST.** Wine-Wayland direct comes second, until NVIDIA ≥ 615.78.08 reaches the Debian repo.
+   - gamescope does its own colour management and talks to KWin over frog/wp. KWin 6.3.6 offers every feature gamescope checks for **[source: both source trees, §3.16]**. KWin 6.3.6 does **not** have the `windows_bt2100` path (added in 6.8) **[source: KWin git, §3.10]**.
+   - **Same resolution, same game:** a ProtonDB report (RTX 5070 Ti, NVIDIA 610.57.04) says Crimson Desert "Crashes when enabling in-game HDR without using gamescope" but works with `gamescope -f -W 3440 -w 3440 -H 1440 -h 1440 --hdr-enabled` **[source: ProtonDB, §3.18]**.
+   - In 2024 a gamescope collaborator reported that **nested gamescope under Plasma worked with HDR at 3440x1440@144 over DisplayPort on NVIDIA**. The broken case was standalone gamescope, not nested **[source: NVIDIA forum 295314]**. Several NVIDIA users also report more accurate HDR colours via gamescope than via Wine-Wayland **[source: §3.14]**.
+   - Turn **NVIDIA Reflex off** in-game (one report crashed with it on under gamescope) **[source: search snippet, §3.11]**.
 
 **MAYBE (works for some, risky on NVIDIA at 3440x1440)**
 
@@ -41,7 +43,7 @@ Labels used below:
 **NO (not possible or not worth it on this machine today)**
 
 5. **HDR on X11 / XFCE itself:** no. X.org has no plans for HDR **[source: Arch Wiki → X.org issue 1037]**. NVIDIA's 2017 "DeepColor" X extension idea never went anywhere **[source: Phoronix]**.
-6. **gamescope nested inside XFCE:** no real HDR. gamescope automatically uses its SDL backend on X11. That backend hard-codes "HDR not active" and outputs SDR (BT.709 / gamma 2.2) unless you set a debug flag that only fakes it **[source: gamescope source]**. This also explains your earlier "invisible/minimised" gamescope window.
+6. **gamescope nested inside XFCE:** no real HDR. gamescope automatically uses its SDL backend on X11. That backend hard-codes "HDR not active" and outputs SDR (BT.709 / gamma 2.2) unless you set a debug flag that forces PQ output whether or not the screen is in HDR mode **[source: gamescope source]**. (Your earlier "invisible/minimised" gamescope window is a separate problem. Its cause wasn't researched.)
 7. **Any Wayland compositor nested in an X11 window** (KWin, sway, Weston, etc.): no. The X11 window it draws into can't carry HDR.
 8. **Vulkan HDR layer under X11:** no. The layer only works with a Wayland compositor that speaks frog or xx/wp colour management **[source: VK_hdr_layer README]**. Your driver doesn't need it anyway.
 9. **sway / labwc / niri / GNOME from Debian trixie:** no or poor. Trixie's sway 1.10.1 and labwc 0.8.3 predate their HDR releases (sway 1.12, labwc 0.20) **[source: Debian packages, Phoronix]**. niri has no HDR **[source: niri discussion]**. GNOME 48 lacks scRGB/frog, so gamescope HDR looks washed out, and mutter leaves HDR metadata zeroed **[source: Arch Wiki]**.
@@ -60,8 +62,9 @@ Labels used below:
 
 1. Plug the monitor in over **DisplayPort** (see §3.8: HDMI 2.0 likely can't carry 10-bit at 100 Hz).
 2. `sudo apt install --no-install-recommends plasma-desktop systemsettings kscreen` (plasma-desktop depends on plasma-workspace → kwin-wayland → Xwayland, and gives you a real desktop shell to launch Steam from; `systemsettings` and `kscreen` hold the Display/HDR page and are only *Recommends*, so name them; `--no-install-recommends` keeps out `sddm` and `kde-config-gtk-style`, the module that rewrites XFCE's GTK theme files). **Don't** install `sddm`: keep LightDM. At the LightDM login screen choose **"Plasma (Wayland)"** only when gaming.
-3. In Plasma: System Settings → Display → **Enable HDR**. Set the SDR brightness slider, and run the HDR calibration if offered.
-4. For Crimson Desert, the safest order (fewest Denuvo activations) is in §3.9.
+3. In Plasma: System Settings → Display → **Enable HDR**, then set the SDR brightness slider **below** the maximum (this helps GE-Proton's HDR auto-detect). Plasma 6.3 has no HDR calibration app; you can set the panel's real peak with `kscreen-doctor output.DP-1.maxBrightnessOverride.<nits>` (§3.17).
+4. Crimson Desert, first try (Proton version unchanged): `DXVK_HDR=1 gamescope -W 3440 -H 1440 -w 3440 -h 1440 -r 144 -f --hdr-enabled --force-grab-cursor -- %command%`, with Reflex off and the in-game HDR peak set to the panel's nits. Full low-Denuvo-activation order in §3.9.
+5. Later, once nvidia-open ≥ 615.78.08 is in NVIDIA's Debian 13 repo: try plain `PROTON_ENABLE_WAYLAND=1 %command%` (Wine-Wayland direct, no gamescope).
 
 ---
 
