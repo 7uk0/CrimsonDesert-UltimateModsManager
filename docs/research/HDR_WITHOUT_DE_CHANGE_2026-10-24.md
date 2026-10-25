@@ -339,6 +339,7 @@ From KDE's official changelogs, these are in Debian's 6.3.6. 6.3.5: "Wayland/col
 ### 3.27 How GE-Proton11-11 decides "HDR" under gamescope and on plain X11 (≈04:37 UTC)
 
 Patch `0069-wine-detect-gamescope-hdr-and-honor-opt-outs.patch` (present in the GE-Proton11-11 tag, along with DXVK's `dxgi-auto-detect-hdr.patch` and `dxgi-respect-output-hdr-state.patch`): under gamescope, Wine reads gamescope's `GAMESCOPE_HDR_OUTPUT_FEEDBACK` X root property, and "A reported SDR state takes precedence over an inherited DXVK_HDR=1". On plain X11 without that feedback it "default[s] to SDR but preserve[s] an explicit DXVK_HDR=1"; `DXVK_HDR=0` / `DXVK_NO_HDR=1` are honoured. https://raw.githubusercontent.com/GloriousEggroll/proton-ge-custom/GE-Proton11-11/patches/wine-hotfixes/em-fixups/0069-wine-detect-gamescope-hdr-and-honor-opt-outs.patch **[source]**
+Debian's gamescope 3.16.22 does publish that atom (`src/steamcompmgr.cpp`: `XInternAtom( … "GAMESCOPE_HDR_OUTPUT_FEEDBACK" … )`) **[source: git show 3.16.22]**.
 → Inside nested gamescope, `DXVK_HDR=1` is harmless: gamescope's own HDR state decides (so the §3.23 SDR-below-peak rule matters). **In XFCE/X11, don't set `DXVK_HDR=1`.** It could make the game offer HDR while the screen stays SDR, which gives a wrong, washed-out picture. **[my reading of the patch]**
 
 ---
