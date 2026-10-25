@@ -290,6 +290,12 @@ https://www.protondb.com/app/3321460 **[source]**. Relevant NVIDIA HDR entries:
 - **CachyOS forum "Gamescope Session NVIDIA"** (Aug–Sep 2026; RTX 4070 Super / 3090): HDR "broken or unreliable", advice to keep it off. VRR works via `ADAPTIVE_SYNC=1`. Steam needed "disable GPU blocklist". https://discuss.cachyos.org/t/gamescope-session-nvidia/34980 **[source]**
 - → **Standalone gamescope + HDR on stock Debian + NVIDIA 615 at 3440x1440 is still a "maybe, probably not".** The only proven fix (PR #1305 + registry key) means patching and building NVIDIA's open kernel module yourself, which is outside what a stock Debian install should take on. **[my assessment]**
 
+### 3.21 Small practical facts checked late (≈04:20 UTC)
+
+- **LightDM + Plasma Wayland on trixie:** Debian bug #1110151 ("Wayland sessions immediately crash on new Trixie install", Plasma and Xfce Wayland via LightDM, Intel T480, July 2025) was closed in Nov 2025 after the reporter "cannot reproduce the error anymore". https://bugs.debian.org/1110151 **[source]**. If the "Plasma (Wayland)" entry fails from LightDM: log in on a TTY and run `startplasma-wayland` to see the error. **[advice]**
+- **No kernel parameter needed for modeset:** NVIDIA 595.45.04+ "enables the modesetting parameter by default for the nvidia-drm kernel driver". Since 570.86.16, fbdev is on by default with modeset (Hyprland wiki). https://www.phoronix.com/news/NVIDIA-595.45.04-Linux-Beta , https://wiki.hypr.land/Nvidia/ **[source]**. Check with `cat /sys/module/nvidia_drm/parameters/modeset` → `Y`. **[advice]**
+- **Valve's own Proton** (Experimental/Hotfix) runs through XWayland. It gets HDR only inside gamescope; GE-Proton / proton-cachyos are the Wine-Wayland builds (Proton #9672 correction). **[source]**
+
 ---
 
 ## 4. Open questions and unconfirmed items
