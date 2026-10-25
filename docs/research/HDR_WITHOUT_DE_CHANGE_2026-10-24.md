@@ -263,6 +263,18 @@ Ian's EDID (HDR10 PQ + BT.2020, per the brief) matches KWin's HDR capability tes
 - → 615.71.10 is a small respin. Expect the 615.71.09 issues (washed-out HDR regression, DP wake bug) to still apply to Ian's driver **[my inference]**. 615.78.08's HDR fixes (metadata validation, washed-out regression) must live in NVIDIA's closed user-space Vulkan driver, which fits the "VkHdrMetadataEXT values" wording **[my inference]**.
 - **Brightness tuning on Plasma 6.3.6** (Debian lacks the 6.6+ calibration app): `kscreen-doctor output.DP-1.maxBrightnessOverride.<nits>` (and `maxAverageBrightnessOverride`, `minBrightnessOverride`) exist in libkscreen 6.3.6's `doctor.cpp`. Set them to what the panel really reaches (Acer lists 250 cd/m² typical, the brief says ~400) so KWin tone-maps correctly. In Crimson Desert, set peak brightness to the same number **[source: doctor.cpp; the advice is mine]**.
 
+### 3.18 ProtonDB, read directly (rendered with headless Chromium, ≈04:16 UTC; 37 most-recent reports loaded)
+
+https://www.protondb.com/app/3321460 **[source]**. Relevant NVIDIA HDR entries:
+- **RTX 5070 Ti, NVIDIA 610.57.04, Manjaro, proton-cachyos-slr (~3 weeks ago):** "Crashes when enabling in-game HDR without using gamescope… I got it to work with gamescope". Launch line: `PROTON_ENABLE_WAYLAND=1 ENABLE_HDR_WSI=1 gamescope -f -W 3440 -w 3440 -H 1440 -h 1440 --hdr-enabled -- %command%`. **Same 3440x1440 resolution as Ian. This matches the pre-615.78.08 zero-metadata crash, and the gamescope-nested workaround.**
+- **RTX 4070 Ti, NVIDIA 615.78.08, Arch, GE-Proton11-7 (~2 weeks ago):** `PROTON_ENABLE_WAYLAND=1 PROTON_ENABLE_HDR=1 %command%`, "Runs very well". Random freezes were fixed by `sysctl kernel.split_lock_mitigate=0` (journal showed split-lock warnings for the game). The report doesn't say outright that HDR worked. Desktop not stated.
+- **RTX 4070 Ti SUPER, NVIDIA 615.71.09, CachyOS, Proton-CachyOS:** Wine-Wayland + HDR flags; "Instability: Occasionally — Turning on HDR … I am pretty sure you only need gamescope to turn it on."
+- Several AMD reports use `PROTON_ENABLE_WAYLAND=1 DXVK_HDR=1` successfully. One notes: "Since Crimson Desert is a DX12 game, for HDR to appear as an option in-game use: DXVK_HDR=1" (pre-GE-11-9 auto-detection).
+- NVIDIA driver spread in the loaded reports: 610.57.04 ×7, 610.43.03 ×4, 615.71.09 ×3, 615.78.08 ×1, 595.84 ×1, 590.48.01 ×1.
+- The 3440x1440@175 "disable Reflex" report from the search snippet was **not** among the 37 loaded reports. It remains snippet-only.
+
+**Extra tip from this (not HDR):** if Crimson Desert freezes randomly on an Intel CPU, check `journalctl -k | grep -i 'split lock'`. Ian has a Ryzen 7 3700X; split-lock detection is mainly an Intel thing, so it probably doesn't apply **[my note, unconfirmed for Zen 2]**.
+
 ---
 
 ## 4. Open questions and unconfirmed items
