@@ -188,7 +188,7 @@ Denuvo limit source: "5 different PC within a day machine activation limit" (Ste
 2. Log out of XFCE → LightDM → session "Plasma (Wayland)" → enable HDR in Display settings, set SDR brightness **below** max (helps GE-Proton's auto-detect, per #838).
 3. Test HDR with something that isn't Denuvo-protected first (e.g. an HDR video in mpv `--vo=gpu-next`, or a non-Denuvo HDR game).
 4. Crimson Desert, **attempt 1** (same GE-Proton11-11, so likely no new activation): launch options `PROTON_ENABLE_WAYLAND=1 %command%`. If it crashes on HDR toggle with "min_lum" in the logs → don't keep retrying.
-5. **Attempt 2** (no Proton change): `gamescope -W 3440 -H 1440 -r 144 -f --hdr-enabled -- %command%` (nested in Plasma; no `PROTON_ENABLE_WAYLAND`, no `ENABLE_HDR_WSI`).
+5. **Attempt 2** (no Proton change): `DXVK_HDR=1 gamescope -W 3440 -H 1440 -w 3440 -h 1440 -r 144 -f --hdr-enabled --force-grab-cursor -- %command%` (nested in Plasma; no `PROTON_ENABLE_WAYLAND`, no `ENABLE_HDR_WSI`; Reflex off). **On Plasma 6.3.6 + driver 615.71.10, do this one FIRST** (see §3.10 and §3.14).
 6. Later, once NVIDIA 615.78.08+ reaches the Debian 13 repo, retry attempt 1.
 
 **Switching back:** log out of Plasma → LightDM → pick "Xfce Session". Nothing else changes. **Uninstall:** `sudo apt purge plasma-workspace kwin-wayland && sudo apt autoremove` (check the list before confirming).
@@ -228,6 +228,18 @@ Denuvo limit source: "5 different PC within a day machine activation limit" (Ste
 
 - **Windows VM with GPU passthrough:** there's only one GPU, so the Linux desktop would be gone while the VM runs anyway. Denuvo/VM behaviour was not found in sources. → no.
 - **HDR game streaming (Sunshine) from this PC:** HDR capture needs KMS capture on Wayland, so it doesn't escape the compositor requirement. https://gamingonlinux.com/2024/03/sunshine-game-streaming-v0220-adds-hdr-on-linux-wayland-nvidia-improvements **[source]**
+
+### 3.14 Pattern across NVIDIA reports: gamescope nested gives the more trustworthy picture (≈04:12 UTC)
+
+- Bazzite #3852 (Jan 2026; Plasma 6.5.4, nvidia-open; Wine-Wayland `PROTON_ENABLE_WAYLAND=1 PROTON_ENABLE_HDR=1`): colours were **washed out** once vk_hdr_layer was removed. "Running games under gamescope gave accurate colors". The maintainers blamed the NVIDIA driver. https://github.com/ublue-os/bazzite/issues/3852 **[source]** (This was before NVIDIA's native Vulkan HDR extensions in 595.58.03, so it may be partly outdated.)
+- Garuda forum (Oct 2025; RTX 3090, Plasma 6.4.5, 580.82.09): HDR games washed out under KDE. gamescope `--hdr-enabled` worked for DMC5. https://forum.garudalinux.org/t/washed-out-colors-in-kde-hdr-nvidia-multi-monitor/46117 **[source]**
+- NVIDIA 615 feedback thread #81 (Sep 2026): a Wine-Wayland game crashed on KWin. The suggested fix was nested gamescope at 3440x1440 `--hdr-enabled` **[source, see §3.10]**.
+- 615.71.x "washed out HDR" regression reportedly fixed in 615.78.08 (§3.10).
+- → **For Ian today (Plasma 6.3.6 + 615.71.10): nested gamescope inside Plasma is the first thing to try**, and Wine-Wayland direct second. **[my synthesis]**
+
+Suggested Crimson Desert launch line for that first try (it keeps GE-Proton11-11, so the Proton version doesn't change):
+`DXVK_HDR=1 gamescope -W 3440 -H 1440 -w 3440 -h 1440 -r 144 -f --hdr-enabled --force-grab-cursor -- %command%`
+(`DXVK_HDR=1` is from the Arch Wiki gamescope recipe; GE-Proton11-9+ auto-detects HDR under gamescope anyway, so it's harmless. Don't set `ENABLE_HDR_WSI`. Turn **NVIDIA Reflex off** in-game, per the ProtonDB report. Match `-r` to the refresh rate Plasma runs at.) **[sources: Arch Wiki, GE release notes, ProtonDB snippet; the exact line is untested]**
 
 ---
 
