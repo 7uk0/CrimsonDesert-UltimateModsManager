@@ -46,6 +46,10 @@ Labels used below:
 8. **Vulkan HDR layer under X11:** no. The layer only works with a Wayland compositor that speaks frog or xx/wp colour management **[source: VK_hdr_layer README]**. Your driver doesn't need it anyway.
 9. **sway / labwc / niri / GNOME from Debian trixie:** no or poor. Trixie's sway 1.10.1 and labwc 0.8.3 predate their HDR releases (sway 1.12, labwc 0.20) **[source: Debian packages, Phoronix]**. niri has no HDR **[source: niri discussion]**. GNOME 48 lacks scRGB/frog, so gamescope HDR looks washed out, and mutter leaves HDR metadata zeroed **[source: Arch Wiki]**.
 
+**LATER / MAYBE: XFCE itself on Wayland**
+
+- Xfce 4.20 can run on labwc (`startxfce4 --wayland`), and labwc ≥ 0.20 has HDR10. Trixie's labwc 0.8.3 doesn't, though, and NVIDIA support is unverified. See §3.12.
+
 **ALWAYS AN OPTION: dual-boot Windows**
 
 10. **Dual-boot Windows.** It has the most mature HDR (the game's own HDR menu, as intended). Downsides: a second OS to maintain, a disk or partition for it, and probably a separate Denuvo "machine" activation **[unconfirmed]**. Covered in §3.6.
@@ -211,6 +215,19 @@ Denuvo limit source: "5 different PC within a day machine activation limit" (Ste
 - **Denuvo and launch options, conflicting claims:** SteamDeckHQ says "Changing launch options or enabling DLSS/raytracing doesn't count towards the limit", only Proton version changes do. Pirat_Nation says launch-option changes count too. https://x.com/SteamDeckHQ/status/2045192293813203341 , https://x.com/Pirat_Nation/status/2045080075247243495 (both via search snippets) **[source, conflicting → unconfirmed]**
 - **Debian gamescope backport** ships the gamescope WSI layer (`/usr/share/vulkan/implicit_layer.d/VkLayer_FROG_gamescope_wsi.x86_64.json`, 64-bit only) that `--hdr-enabled` needs ("needs Gamescope WSI layer enabled for support from clients" — gamescope `--help`). Binaries go in `/usr/games`. It depends on libwlroots-0.18. https://packages.debian.org/trixie-backports/amd64/gamescope/filelist **[source]**
 - **XFCE theme safety:** Plasma's GTK sync module rewrites `~/.config/gtk-3.0/settings.ini` / `~/.gtkrc-2.0`, which XFCE also uses (Arch Wiki KDE, XFCE forum reports). In Debian that module is `kde-config-gtk-style`, only a *Recommends* of plasma-desktop, so `--no-install-recommends` avoids it. https://forum.xfce.org/viewtopic.php?id=9804 , https://packages.debian.org/trixie/plasma-desktop **[source]**
+
+### 3.12 Keep XFCE itself, but on Wayland? (extra angle, ≈04:11 UTC)
+
+- Xfce 4.20 has **experimental** Wayland support. `startxfce4 --wayland` from a TTY runs xfce4-session under **labwc** (or Wayfire). Panel, Thunar, settings, xfdesktop etc. work; xfwm4 does not (it's X11-only). https://wiki.xfce.org/releng/wayland_roadmap , https://xfce.org/about/tour **[source]**
+- Debian's xfce4-session 4.20.2-2 ships only `/usr/share/xsessions/xfce.desktop`, with no Wayland session file, so this would be a TTY start or a hand-written session file. https://packages.debian.org/trixie/amd64/xfce4-session/filelist **[source]**
+- HDR then depends on labwc: **trixie's labwc 0.8.3 has no HDR**. HDR10 arrived in **labwc 0.20.0** (25 May 2026, "HDR10 support when running with the Vulkan renderer option"; needs wlroots ≥ 0.20.1). wlroots 0.20 exists only in forky/sid; trixie has 0.18. https://github.com/labwc/labwc/releases , https://packages.debian.org/search?keywords=libwlroots-0.20-dev **[source]**
+- Xfce's own compositor **xfwl4** (announced Jan 2026, Rust + Smithay) is "under heavy development"; no HDR info found. Smithay-based niri has no HDR. https://lwn.net/Articles/1056159/ **[source]**
+- **Verdict: "later, maybe".** This is the most "XFCE-like" HDR path, but on trixie it means backporting or building wlroots 0.20 + labwc 0.20 yourself. labwc HDR on NVIDIA is not confirmed anywhere I found. Revisit when Debian forky becomes stable, or if a trixie-backport appears.
+
+### 3.13 Not pursued
+
+- **Windows VM with GPU passthrough:** there's only one GPU, so the Linux desktop would be gone while the VM runs anyway. Denuvo/VM behaviour was not found in sources. → no.
+- **HDR game streaming (Sunshine) from this PC:** HDR capture needs KMS capture on Wayland, so it doesn't escape the compositor requirement. https://gamingonlinux.com/2024/03/sunshine-game-streaming-v0220-adds-hdr-on-linux-wayland-nvidia-improvements **[source]**
 
 ---
 
