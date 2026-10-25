@@ -300,6 +300,11 @@ https://www.protondb.com/app/3321460 **[source]**. Relevant NVIDIA HDR entries:
 - **No kernel parameter needed for modeset:** NVIDIA 595.45.04+ "enables the modesetting parameter by default for the nvidia-drm kernel driver". Since 570.86.16, fbdev is on by default with modeset (Hyprland wiki). https://www.phoronix.com/news/NVIDIA-595.45.04-Linux-Beta , https://wiki.hypr.land/Nvidia/ **[source]**. Check with `cat /sys/module/nvidia_drm/parameters/modeset` → `Y`. **[advice]**
 - **Valve's own Proton** (Experimental/Hotfix) runs through XWayland. It gets HDR only inside gamescope; GE-Proton / proton-cachyos are the Wine-Wayland builds (Proton #9672 correction). **[source]**
 
+### 3.22 Version availability, checked once more (≈04:23 UTC)
+
+- NVIDIA Debian 13 repo: newest `nvidia-open` is **615.71.10-1 (file dated 2026-09-24)**. 615.78.08 is not there yet. https://developer.download.nvidia.com/compute/cuda/repos/debian13/x86_64/ **[source]**
+- **No newer Plasma for trixie:** kwin-wayland isn't in trixie-backports. The Debian Qt/KDE team's trixie plan page lists no Plasma backports beyond 6.3.0 (Feb 2025). https://wiki.debian.org/PkgQtKde/TrixieReleasePlans , https://packages.debian.org/search?keywords=kwin-wayland **[source]**. Plasma ≥ 6.8 (with `windows_bt2100`) means waiting for Debian 14 "forky" (6.7.4 there today) or leaving Debian stable. Neither is recommended here.
+
 ---
 
 ## 4. Open questions and unconfirmed items
