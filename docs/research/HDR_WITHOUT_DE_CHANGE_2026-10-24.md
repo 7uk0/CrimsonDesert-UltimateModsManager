@@ -257,6 +257,12 @@ KWin v6.3.6 `src/wayland/colormanagement_v1.cpp` advertises these features: para
 gamescope's `bSupportsGamescopeColorManagement` check (WaylandBackend.cpp) requires parametric + set_primaries + set_mastering_display_primaries + extended_target_volume + set_luminances + windows_scrgb + PQ + sRGB/BT.2020 primaries, **all of which KWin 6.3.6 offers**. gamescope can also fall back to frog. → Nested gamescope HDR should be fully supported, protocol-wise, on Debian's Plasma. **[source: both files; actual picture on NVIDIA untested]**
 Ian's EDID (HDR10 PQ + BT.2020, per the brief) matches KWin's HDR capability test: `HDR_OUTPUT_METADATA` property + `edid()->supportsPQ()` + colourspace allowed (NVIDIA ≥ 565.57.01). **[source: drm_output.cpp]**
 
+### 3.17 What 615.71.10 vs 615.78.08 actually change (source diff, ≈04:15 UTC)
+
+- I diffed these NVIDIA open-kernel-module display files across tags **615.71.09 → 615.71.10 → 615.78.08**: `nvidia-drm-crtc.c`, `nvidia-modeset-linux.c`, `nvkms-hdmi.c`, `nvkms-evo.c`, `nvkms-dpy.c`, `nvkms-modeset.c`, `nvdp-connector-event-sink.cpp`. They have **0 changed lines between 615.71.09 and 615.71.10**, and also between 615.71.10 and 615.78.08 for the files compared. (`nvidia-drm-crtc.c` did change, 3470 → 3528 lines, between 615.71.10 and 615.78.08, but not in HDR or scanout code by keyword.) https://github.com/NVIDIA/open-gpu-kernel-modules (tags) **[source, my diff]**
+- → 615.71.10 is a small respin. Expect the 615.71.09 issues (washed-out HDR regression, DP wake bug) to still apply to Ian's driver **[my inference]**. 615.78.08's HDR fixes (metadata validation, washed-out regression) must live in NVIDIA's closed user-space Vulkan driver, which fits the "VkHdrMetadataEXT values" wording **[my inference]**.
+- **Brightness tuning on Plasma 6.3.6** (Debian lacks the 6.6+ calibration app): `kscreen-doctor output.DP-1.maxBrightnessOverride.<nits>` (and `maxAverageBrightnessOverride`, `minBrightnessOverride`) exist in libkscreen 6.3.6's `doctor.cpp`. Set them to what the panel really reaches (Acer lists 250 cd/m² typical, the brief says ~400) so KWin tone-maps correctly. In Crimson Desert, set peak brightness to the same number **[source: doctor.cpp; the advice is mine]**.
+
 ---
 
 ## 4. Open questions and unconfirmed items
