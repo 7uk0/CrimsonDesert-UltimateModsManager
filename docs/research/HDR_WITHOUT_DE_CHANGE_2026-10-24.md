@@ -313,6 +313,11 @@ https://www.protondb.com/app/3321460 **[source]**. Relevant NVIDIA HDR entries:
 - → **On a ~250–400 nit panel, KWin's SDR brightness can easily end up equal to the peak, and then gamescope silently stays SDR.** In Plasma's Display settings (or `kscreen-doctor output.DP-1.sdr-brightness.<nits>`), set SDR brightness clearly **below** the panel's peak (e.g. peak 400 → SDR ~200–300). Check the gamescope terminal/log for `bExposeHDRSupport: true`. **[my synthesis of the sources]**
 - **Where KWin's numbers come from:** KWin v6.3.6 takes the output's peak from the EDID's *desired content max luminance* (`drm_output.cpp`: `.maxPeakBrightness = edid->desiredMaxLuminance()`), unless `maxBrightnessOverride` is set (`core/output.cpp`). To read the EDID values: `edid-decode /sys/class/drm/card*-DP-*/edid | grep -iE 'luminance'`. Then set `maxBrightnessOverride` to the real peak and SDR brightness clearly below it. https://invent.kde.org/plasma/kwin/-/blob/v6.3.6/src/core/output.cpp **[source; command is general edid-decode usage]**
 
+### 3.24 Two more small items (≈04:25 UTC)
+
+- **Hyprland + GE-Proton ≥ 11-9: chicken-and-egg.** A Hyprland user on GE-Proton11-11.1 (#838, 22–24 Oct 2026) found that games get HDR only if the **whole desktop** is already in HDR. Before, Hyprland switched to HDR on its own when a game asked for it. GE now only reports HDR when the output is already HDR. Their workaround is a Hyprland Lua rule that sets `cm` to HDR when a given game window opens; it worked for one game and not another. https://github.com/GloriousEggroll/proton-ge-custom/issues/838 **[source]** → one more reason to prefer Plasma (toggle HDR on for the gaming session and leave it on).
+- **RenoDX (ReShade HDR mod) for Crimson Desert:** community guides use it to rework the game's HDR, and some Steam users blamed it for broken HDR. It isn't needed for any path above. Leave it out while testing, since it also changes game files **[source: search summaries of a rutab.net guide and Steam discussions; Linux behaviour unconfirmed]**.
+
 ---
 
 ## 4. Open questions and unconfirmed items
